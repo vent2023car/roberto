@@ -1,0 +1,405 @@
+  
+  package Serie3;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+
+public class Biblioteca extends javax.swing.JFrame {
+
+    private List<Libro> libros;
+    private List<Autor> autores;
+    private List<Usuario> usuarios;
+    private Map<Libro, Usuario> librosPrestados;
+
+    public Biblioteca() {
+        initComponents();
+        libros = new ArrayList<>();
+        autores = new ArrayList<>();
+        usuarios = new ArrayList<>();
+        librosPrestados = new HashMap<>();
+    }
+    
+class Autor {
+    String nombre;
+
+    public Autor(String nombre) {
+        this.nombre = nombre;
+    }
+}
+
+class Libro {
+    String titulo;
+    Autor autor;
+    boolean prestado;
+
+    public Libro(String titulo, Autor autor) {
+        this.titulo = titulo;
+        this.autor = autor;
+        this.prestado = false;
+    }
+}
+
+class Usuario {
+    String nombre;
+
+    public Usuario(String nombre) {
+        this.nombre = nombre;
+    }
+}
+    
+    private void initComponents() {
+        pack();
+    }
+
+    private void btnAgregarLibroActionPerformed(java.awt.event.ActionEvent evt) {
+      
+
+        String titulo = JOptionPane.showInputDialog(this, "Ingrese Nombre del Libro:   ");
+        String autorNombre = JOptionPane.showInputDialog(this, "Ingrese nombre del autor del Libro:  ");
+        Autor autor = agregarAutor(autorNombre);
+
+        if (titulo != null && autor != null) {
+            Libro libro = new Libro(titulo, autor);
+            libros.add(libro);
+            actualizarListaLibros();
+        }
+    }
+
+    private Autor agregarAutor(String nombre) {
+       
+        Autor autor = new Autor(nombre);
+        autores.add(autor);
+        return autor;
+    }
+
+    private void btnAgregarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {
+        
+  
+        String nombre = JOptionPane.showInputDialog(this, "Ingrese nombre de usuario: ");
+        if (nombre != null) {
+            Usuario usuario = new Usuario(nombre);
+            usuarios.add(usuario);
+        }
+    }
+
+    private void btnListarLibrosDeAutorActionPerformed(java.awt.event.ActionEvent evt) {
+  
+        String autorNombre = JOptionPane.showInputDialog(this, "Ingrese  nombre del autor:");
+        Autor autor = buscarAutor(autorNombre);
+
+        if (autor != null) {
+            listarLibrosDeAutor(autor);
+        }
+    }
+
+    private void listarLibrosDeAutor(Autor autor) {
+        
+        DefaultListModel<String> model = new DefaultListModel<>();
+        for (Libro libro : libros) {
+            if (libro.autor.equals(autor)) {
+                model.addElement(libro.titulo);
+            }
+        }
+        listaLibros.setModel(model);
+    }
+
+    private Autor buscarAutor(String nombre) {
+        for (Autor autor : autores) {
+            if (autor.nombre.equalsIgnoreCase(nombre)) {
+                return autor;
+            }
+        }
+        return null;
+    }
+
+    private void btnPrestarLibroActionPerformed(java.awt.event.ActionEvent evt) {
+      
+        String libroTitulo = JOptionPane.showInputDialog(this, "Ingrese el título del libro a prestar:");
+        Libro libro = buscarLibro(libroTitulo);
+
+        if (libro != null && !libro.prestado) {
+            String usuarioNombre = JOptionPane.showInputDialog(this, "Ingrese el nombre del usuario:");
+            Usuario usuario = buscarUsuario(usuarioNombre);
+
+            if (usuario != null) {
+                libro.prestado = true;
+                librosPrestados.put(libro, usuario);
+                JOptionPane.showMessageDialog(this, "Libro prestado con éxito.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Usuario no encontrado.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "El libro no está disponible para prestar.");
+        }
+    }
+
+    private Libro buscarLibro(String titulo) {
+        for (Libro libro : libros) {
+            if (libro.titulo.equalsIgnoreCase(titulo)) {
+                return libro;
+            }
+        }
+        return null;
+    }
+
+    private Usuario buscarUsuario(String nombre) {
+        for (Usuario usuario : usuarios) {
+            if (usuario.nombre.equalsIgnoreCase(nombre)) {
+                return usuario;
+            }
+        }
+        return null;
+    }
+
+    private void btnDevolverLibroActionPerformed(java.awt.event.ActionEvent evt) {
+     
+        String libroTitulo = JOptionPane.showInputDialog(this, "Ingrese el título del libro a devolver:");
+        Libro libro = buscarLibro(libroTitulo);
+
+        if (libro != null && libro.prestado) {
+            libro.prestado = false;
+            librosPrestados.remove(libro);
+            JOptionPane.showMessageDialog(this, "Libro devuelto con éxito.");
+        } else {
+            JOptionPane.showMessageDialog(this, "El libro no estaba prestado.");
+        }
+    }
+
+    private void btnListarLibrosPrestadosActionPerformed(java.awt.event.ActionEvent evt) {
+       
+        String usuarioNombre = JOptionPane.showInputDialog(this, "Ingrese el nombre del usuario:");
+        Usuario usuario = buscarUsuario(usuarioNombre);
+
+        if (usuario != null) {
+            listarLibrosPrestados(usuario);
+        } else {
+            JOptionPane.showMessageDialog(this, "Usuario no encontrado.");
+        }
+    }
+
+    private void listarLibrosPrestados(Usuario usuario) {
+        DefaultListModel<String> model = new DefaultListModel<>();
+        for (Map.Entry<Libro, Usuario> entry : librosPrestados.entrySet()) {
+            if (entry.getValue().equals(usuario)) {
+                model.addElement(entry.getKey().titulo);
+            }
+        }
+        listaLibros.setModel(model);
+    }
+
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(() -> {
+            new Biblioteca().setVisible(true);
+        });
+    }
+
+    private void actualizarListaLibros() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+}
+package Serie3;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+
+public class Biblioteca extends javax.swing.JFrame {
+
+    private List<Libro> libros;
+    private List<Autor> autores;
+    private List<Usuario> usuarios;
+    private Map<Libro, Usuario> librosPrestados;
+
+    public Biblioteca() {
+        initComponents();
+        libros = new ArrayList<>();
+        autores = new ArrayList<>();
+        usuarios = new ArrayList<>();
+        librosPrestados = new HashMap<>();
+    }
+    
+class Autor {
+    String nombre;
+
+    public Autor(String nombre) {
+        this.nombre = nombre;
+    }
+}
+
+class Libro {
+    String titulo;
+    Autor autor;
+    boolean prestado;
+
+    public Libro(String titulo, Autor autor) {
+        this.titulo = titulo;
+        this.autor = autor;
+        this.prestado = false;
+    }
+}
+
+class Usuario {
+    String nombre;
+
+    public Usuario(String nombre) {
+        this.nombre = nombre;
+    }
+}
+    
+    private void initComponents() {
+        pack();
+    }
+
+    private void btnAgregarLibroActionPerformed(java.awt.event.ActionEvent evt) {
+      
+
+        String titulo = JOptionPane.showInputDialog(this, "Ingrese Nombre del Libro:   ");
+        String autorNombre = JOptionPane.showInputDialog(this, "Ingrese nombre del autor del Libro:  ");
+        Autor autor = agregarAutor(autorNombre);
+
+        if (titulo != null && autor != null) {
+            Libro libro = new Libro(titulo, autor);
+            libros.add(libro);
+            actualizarListaLibros();
+        }
+    }
+
+    private Autor agregarAutor(String nombre) {
+       
+        Autor autor = new Autor(nombre);
+        autores.add(autor);
+        return autor;
+    }
+
+    private void btnAgregarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {
+        
+  
+        String nombre = JOptionPane.showInputDialog(this, "Ingrese nombre de usuario: ");
+        if (nombre != null) {
+            Usuario usuario = new Usuario(nombre);
+            usuarios.add(usuario);
+        }
+    }
+
+    private void btnListarLibrosDeAutorActionPerformed(java.awt.event.ActionEvent evt) {
+  
+        String autorNombre = JOptionPane.showInputDialog(this, "Ingrese  nombre del autor:");
+        Autor autor = buscarAutor(autorNombre);
+
+        if (autor != null) {
+            listarLibrosDeAutor(autor);
+        }
+    }
+
+    private void listarLibrosDeAutor(Autor autor) {
+        
+        DefaultListModel<String> model = new DefaultListModel<>();
+        for (Libro libro : libros) {
+            if (libro.autor.equals(autor)) {
+                model.addElement(libro.titulo);
+            }
+        }
+        listaLibros.setModel(model);
+    }
+
+    private Autor buscarAutor(String nombre) {
+        for (Autor autor : autores) {
+            if (autor.nombre.equalsIgnoreCase(nombre)) {
+                return autor;
+            }
+        }
+        return null;
+    }
+
+    private void btnPrestarLibroActionPerformed(java.awt.event.ActionEvent evt) {
+      
+        String libroTitulo = JOptionPane.showInputDialog(this, "Ingrese el título del libro a prestar:");
+        Libro libro = buscarLibro(libroTitulo);
+
+        if (libro != null && !libro.prestado) {
+            String usuarioNombre = JOptionPane.showInputDialog(this, "Ingrese el nombre del usuario:");
+            Usuario usuario = buscarUsuario(usuarioNombre);
+
+            if (usuario != null) {
+                libro.prestado = true;
+                librosPrestados.put(libro, usuario);
+                JOptionPane.showMessageDialog(this, "Libro prestado con éxito.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Usuario no encontrado.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "El libro no está disponible para prestar.");
+        }
+    }
+
+    private Libro buscarLibro(String titulo) {
+        for (Libro libro : libros) {
+            if (libro.titulo.equalsIgnoreCase(titulo)) {
+                return libro;
+            }
+        }
+        return null;
+    }
+
+    private Usuario buscarUsuario(String nombre) {
+        for (Usuario usuario : usuarios) {
+            if (usuario.nombre.equalsIgnoreCase(nombre)) {
+                return usuario;
+            }
+        }
+        return null;
+    }
+
+    private void btnDevolverLibroActionPerformed(java.awt.event.ActionEvent evt) {
+     
+        String libroTitulo = JOptionPane.showInputDialog(this, "Ingrese el título del libro a devolver:");
+        Libro libro = buscarLibro(libroTitulo);
+
+        if (libro != null && libro.prestado) {
+            libro.prestado = false;
+            librosPrestados.remove(libro);
+            JOptionPane.showMessageDialog(this, "Libro devuelto con éxito.");
+        } else {
+            JOptionPane.showMessageDialog(this, "El libro no estaba prestado.");
+        }
+    }
+
+    private void btnListarLibrosPrestadosActionPerformed(java.awt.event.ActionEvent evt) {
+       
+        String usuarioNombre = JOptionPane.showInputDialog(this, "Ingrese el nombre del usuario:");
+        Usuario usuario = buscarUsuario(usuarioNombre);
+
+        if (usuario != null) {
+            listarLibrosPrestados(usuario);
+        } else {
+            JOptionPane.showMessageDialog(this, "Usuario no encontrado.");
+        }
+    }
+
+    private void listarLibrosPrestados(Usuario usuario) {
+        DefaultListModel<String> model = new DefaultListModel<>();
+        for (Map.Entry<Libro, Usuario> entry : librosPrestados.entrySet()) {
+            if (entry.getValue().equals(usuario)) {
+                model.addElement(entry.getKey().titulo);
+            }
+        }
+        listaLibros.setModel(model);
+    }
+
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(() -> {
+            new Biblioteca().setVisible(true);
+        });
+    }
+
+    private void actualizarListaLibros() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+}
